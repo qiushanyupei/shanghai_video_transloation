@@ -103,5 +103,5 @@ def home_page():
             # 提交会话，将数据保存到数据库
             db.commit()
             return jsonify({"flag": "Success", "file_path": new_file.filepath,"subtitle_path":new_file.srtpath})
-
-    return render_template("主界面.html")
+    elif request.method == 'GET':
+        return render_template("主界面.html")
