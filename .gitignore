@@ -1,0 +1,7 @@
+.idea/
+__pycache__/
+templates/
+venv/
+uploads/
+checkpoint-1020/
+static/
