@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, LargeBinary, ForeignKey,DateTime
+from sqlalchemy import Column, Integer,Boolean, String, Text, LargeBinary, ForeignKey,DateTime
 from sqlalchemy.orm import relationship
 from db.db_config import Base
 from datetime import datetime
@@ -21,15 +21,28 @@ class Video(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # 外键，关联 users 表
     filename = Column(String(255), nullable=False)  # 文件名
     filepath = Column(String(255), nullable=False)  # 文件存储路径
+    newfilepath = Column(String(255), nullable=False)
     srtpath = Column(String(255), nullable=False)
+    fontsize = Column(String(255), default="18px")
+    color = Column(String(255), default="#ffffff")
     #datetime是python内置的
     upload_time = Column(DateTime, default=datetime.utcnow)  # 上传时间，默认为当前时间
+    is_public = Column(Boolean, default=False)  # 是否公开，默认为 False
 
     # 定义与 User 表的关系
     user = relationship("User", back_populates="videos")
 
     def __repr__(self):
         return f"<Video(id={self.id}, user_id={self.user_id},filename='{self.filename}')>"
+
+class Collect(Base):
+    __tablename__ = 'collects'
+
+    username = Column(String(255), primary_key=True, nullable=False)
+    filename = Column(String(255), primary_key=True,nullable=False)
+
+    def __repr__(self):
+        return f"<Collect(username='{self.username}', filename='{self.filename}')>"
 
 # class Document(Base):
 #     __tablename__ = 'documents'

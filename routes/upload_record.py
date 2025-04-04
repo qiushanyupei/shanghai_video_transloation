@@ -7,8 +7,8 @@ upload_record = Blueprint('upload_record', __name__)
 
 @upload_record.route('/upload_record',methods=['GET'])
 def upload_record_():
+    #formdata数据接受方式
     username = request.args.get("username", "")
-    print(username)
     #第一个参数是键名，第二个参数是键不存在时返回的默认值
     result = []
     with get_db() as db:
@@ -22,7 +22,9 @@ def upload_record_():
                 result.append({
                     "name": video.filename,
                     "file_path": video.filepath,
-                    "subtitle_path": video.srtpath
+                    "subtitle_path": video.srtpath,
+                    "font_size": video.fontsize,
+                    "color": video.color,
+                    "is_public_flag": video.is_public
                 })
-            print(result)
     return jsonify(result)
