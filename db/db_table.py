@@ -25,6 +25,10 @@ class Video(Base):
     srtpath = Column(String(255), nullable=False)
     fontsize = Column(String(255), default="18px")
     color = Column(String(255), default="#ffffff")
+    fontfamily = Column(String(255), default="SimSun")
+    bold = Column(Boolean, default=False)
+    italic = Column(Boolean, default=False)
+    underline = Column(Boolean, default=False)
     #datetime是python内置的
     upload_time = Column(DateTime, default=datetime.utcnow)  # 上传时间，默认为当前时间
     is_public = Column(Boolean, default=False)  # 是否公开，默认为 False

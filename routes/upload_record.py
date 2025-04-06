@@ -19,12 +19,17 @@ def upload_record_():
         else:
             video_info = db.query(Video).filter(Video.user_id == user.id)
             for video in video_info:
+                print(video.fontfamily)
                 result.append({
                     "name": video.filename,
                     "file_path": video.filepath,
                     "subtitle_path": video.srtpath,
                     "font_size": video.fontsize,
                     "color": video.color,
-                    "is_public_flag": video.is_public
+                    "is_public_flag": video.is_public,
+                    "font_family":video.fontfamily,
+                    "bold":video.bold,
+                    "italic":video.italic,
+                    "underline":video.underline
                 })
     return jsonify(result)

@@ -18,7 +18,7 @@ def hex_to_ass_color(hex_color):
     bb = hex_color[4:6]  # Blue
     return f"&H{bb}{gg}{rr}&"  # Reorder to BBGGRR
 
-def embed_subtitle(input_video, subtitle_file, output_video,color,font_size):
+def embed_subtitle(input_video, subtitle_file, output_video,color,font_size,font_name,bold,italic,underline):
     """
     使用FFmpeg硬嵌入SRT字幕到视频
 
@@ -31,7 +31,11 @@ def embed_subtitle(input_video, subtitle_file, output_video,color,font_size):
         'ffmpeg',
         '-i', input_video,
         '-vf', f"subtitles={subtitle_file}:force_style="
-               f"'FontSize={font_size},"
+               f"'Bold={bold},"  # 粗体(1=启用)
+               f"Italic={italic},"  # 斜体(1=启用)
+               f"Underline={underline},"  # 下划线(1=启用)
+               f"FontName={font_name},"
+               f"FontSize={font_size},"
                f"PrimaryColour={color},"
                "OutlineColour=&H000000&,"
                "BorderStyle=1'",
@@ -71,7 +75,10 @@ def new_video_():
     video_path = data.get('videoPath')
     font_size = styles.get('fontSize')
     color = styles.get('color')
-    # font_family = styles.get('fontFamily')
+    font_family = styles.get('fontFamily')
+    bold = styles.get('bold')
+    italic = styles.get('italic')
+    underline = styles.get('underline')
     #覆写服务器的srt文件
     with open(subtitle_path, 'w', encoding='utf-8') as file:
         file.write(srt)
@@ -84,6 +91,10 @@ def new_video_():
         video_info = db.query(Video).filter(Video.filepath == video_path).first()
         video_info.fontsize = font_size
         video_info.color = color
+        video_info.fontfamily = font_family
+        video_info.bold = bold
+        video_info.italic = italic
+        video_info.underline = underline
         db.commit()
 
     success = embed_subtitle(
@@ -91,7 +102,11 @@ def new_video_():
         subtitle_file=subtitle_path,
         output_video=output_dir,
         font_size=font_size,
-        color=hex_to_ass_color(color)
+        color=hex_to_ass_color(color),
+        font_name=font_family,
+        bold=int(bold),
+        italic=int(italic),
+        underline=int(underline)
     )
     #把原始视频的内容覆盖，暂时决定不需要
     # shutil.copyfile(output_dir, video_path)

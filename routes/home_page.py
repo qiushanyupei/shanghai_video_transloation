@@ -22,7 +22,7 @@ def extract_audio(video_path, output_audio_path):
     video.close()
 
 #切分音频为5秒一段
-def split_audio(audio_path, chunk_length_ms=3000, output_dir="./static/chunks"):
+def split_audio(audio_path, chunk_length_ms=6000, output_dir="./static/chunks"):
     audio = AudioSegment.from_wav(audio_path)
     os.makedirs(output_dir, exist_ok=True)
 
@@ -82,7 +82,7 @@ def home_page():
         chunk_path=f"{CHUNK}_{file_name_without_extension}"
         extract_audio(file_path, audio_path)
         audio_chunks = split_audio(audio_path, output_dir=chunk_path)
-        checkpoint_path = './checkpoint-3000'  # 你的 checkpoint 文件夹
+        checkpoint_path = './checkpoint-1600'  # 你的 checkpoint 文件夹
         processor = Wav2Vec2Processor.from_pretrained(checkpoint_path)
         model = Wav2Vec2ForCTC.from_pretrained(checkpoint_path)
         model.eval()
