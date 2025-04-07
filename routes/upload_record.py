@@ -2,6 +2,7 @@ from flask import Blueprint,request,jsonify
 from db.db_init import get_db
 import os
 from db.db_table import Video,User
+from datetime import datetime
 
 upload_record = Blueprint('upload_record', __name__)
 
@@ -30,6 +31,7 @@ def upload_record_():
                     "font_family":video.fontfamily,
                     "bold":video.bold,
                     "italic":video.italic,
-                    "underline":video.underline
+                    "underline":video.underline,
+                    "datetime":video.upload_time.strftime("%Y-%m-%d %H:%M:%S")
                 })
     return jsonify(result)

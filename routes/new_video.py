@@ -4,6 +4,7 @@ from db.db_table import User,Video
 import os
 import subprocess
 import shutil
+from datetime import datetime,timedelta
 
 new_video = Blueprint('new_video', __name__)
 #转换成ffmpeg可以接受的颜色参数
@@ -86,6 +87,7 @@ def new_video_():
     name, extension = os.path.splitext(video_path)
     # 改写新视频的路径
     output_dir = f"{name}_new{extension}"
+
     #改动数据库中的
     with get_db() as db:
         video_info = db.query(Video).filter(Video.filepath == video_path).first()
@@ -95,6 +97,7 @@ def new_video_():
         video_info.bold = bold
         video_info.italic = italic
         video_info.underline = underline
+        video_info.upload_time = datetime.utcnow() + timedelta(hours=8)
         db.commit()
 
     success = embed_subtitle(

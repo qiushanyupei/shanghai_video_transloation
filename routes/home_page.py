@@ -1,3 +1,5 @@
+import time
+import requests
 from flask import Blueprint,render_template,request,jsonify,url_for
 from db.db_init import get_db
 import os
@@ -79,6 +81,14 @@ def home_page():
         file_name_without_extension = os.path.splitext(file.filename)[0]
         audio_path = f"{AUDIO}_{file_name_without_extension}.wav"
         srt_path = f"{SRT}_{file_name_without_extension}.srt"
+        # if file.filename == "阿尼亚.mp4" and os.path.exists(srt_path):
+        #     pass
+        #     time.sleep(10)
+        # elif file.filename == "叶问.mp4" and os.path.exists(srt_path):
+        #     pass
+        #     time.sleep(10)
+        # else:
+        print("没找到文件")
         chunk_path=f"{CHUNK}_{file_name_without_extension}"
         extract_audio(file_path, audio_path)
         audio_chunks = split_audio(audio_path, output_dir=chunk_path)
@@ -88,15 +98,24 @@ def home_page():
         model.eval()
 
         def transcribe_chunk(chunk_path):
-            # 读取为音频本身的流状格式
-            audio, sr = librosa.load(chunk_path, sr=16000)
-            """对音频进行解码"""
-            inputs = processor(audio, return_tensors="pt", sampling_rate=16000)
-            logits = model(**inputs).logits
-            pred_ids = torch.argmax(logits, dim=-1)
-            text = processor.batch_decode(pred_ids, skip_special_tokens=True)
-            print(text[0])
-            return text[0] if text else ""
+            # # 读取为音频本身的流状格式
+            # audio, sr = librosa.load(chunk_path, sr=16000)
+            # """对音频进行解码"""
+            # inputs = processor(audio, return_tensors="pt", sampling_rate=16000)
+            # logits = model(**inputs).logits
+            # pred_ids = torch.argmax(logits, dim=-1)
+            # text = processor.batch_decode(pred_ids, skip_special_tokens=True)
+            # print(text[0])
+            # return text[0] if text else ""
+            url = "http://192.168.1.101:5001/decode"
+            with open(chunk_path, 'rb') as f:
+                files = {'file': ('audio.wav', f, 'audio/wav')}
+                response = requests.post(url, files=files)
+
+            if response.status_code == 200:
+                return response.json()['decoded_text']
+            else:
+                raise Exception(f"Model server error: {response.text}")
 
         for chunk in audio_chunks:
             text = transcribe_chunk(chunk["path"])  # 将音频文件翻译成文字

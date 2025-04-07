@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer,Boolean, String, Text, LargeBinary, ForeignKey,DateTime
 from sqlalchemy.orm import relationship
 from db.db_config import Base
-from datetime import datetime
+from datetime import datetime,timedelta
 
 class User(Base):
     __tablename__ = 'users'
@@ -30,7 +30,7 @@ class Video(Base):
     italic = Column(Boolean, default=False)
     underline = Column(Boolean, default=False)
     #datetime是python内置的
-    upload_time = Column(DateTime, default=datetime.utcnow)  # 上传时间，默认为当前时间
+    upload_time = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(hours=8))  # 上传时间，默认为当前时间
     is_public = Column(Boolean, default=False)  # 是否公开，默认为 False
 
     # 定义与 User 表的关系
